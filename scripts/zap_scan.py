@@ -30,7 +30,7 @@ def api(ruta, formato="JSON", **parametros):
     """Llama a la API de ZAP y devuelve JSON (o texto para los reportes)."""
     parametros["apikey"] = CLAVE
     url = f"{ZAP}/{formato}/{ruta}/?{urllib.parse.urlencode(parametros)}"
-    with urllib.request.urlopen(url, timeout=60) as respuesta:
+    with urllib.request.urlopen(url, timeout=420) as respuesta:
         cuerpo = respuesta.read().decode("utf-8")
     return json.loads(cuerpo) if formato == "JSON" else cuerpo
 
