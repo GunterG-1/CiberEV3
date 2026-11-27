@@ -197,16 +197,12 @@ def obtener_alumno(alumno_id):
 
 @app.route("/alumnos/buscar")
 def buscar_alumnos():
-    """!
-    @brief Busca alumnos cuyo nombre contenga el texto del parámetro «nombre».
-    @return JSON con los alumnos encontrados.
-    """
+    """Busca alumnos cuyo nombre contenga el texto del parámetro «nombre»."""
     nombre = request.args.get("nombre", "")
-    consulta = f"SELECT * FROM alumnos WHERE nombre LIKE '%{nombre}%'"
-    try:
-        filas = conectar().execute(consulta).fetchall()
-    except sqlite3.Error as error:
-        return jsonify({"error": str(error), "consulta": consulta}), 500
+    filas = conectar().execute(
+        "SELECT * FROM alumnos WHERE nombre LIKE ?",
+        (f"%{nombre}%",),
+    ).fetchall()
     return jsonify([dict(f) for f in filas])
 
 

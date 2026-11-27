@@ -67,3 +67,12 @@ def test_metricas(client):
     assert r.status_code == 200
     assert b"http_requests_total" in r.data
     assert b"login_fallidos_total" in r.data
+
+def test_buscar_no_permite_inyeccion_sql(client):
+    carga = "zzz' UNION SELECT 0, name, sql, 0 FROM sqlite_master --"
+    respuesta = client.get(
+        "/alumnos/buscar",
+        query_string={"nombre": carga},
+    )
+    assert respuesta.status_code == 200
+    assert respuesta.get_json() == []
