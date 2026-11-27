@@ -24,6 +24,17 @@ def test_hello_saluda(client):
     assert r.status_code == 200
     assert "Ana" in r.get_data(as_text=True)
 
+def test_hello_escapa_html(client):
+    r = client.get(
+        "/hello",
+        query_string={"name": "<script>alert(1)</script>"},
+    )
+    cuerpo = r.get_data(as_text=True)
+
+    assert r.status_code == 200
+    assert "<script>" not in cuerpo
+    assert "&lt;script&gt;" in cuerpo
+
 
 def test_health(client):
     r = client.get("/health")

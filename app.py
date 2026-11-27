@@ -151,7 +151,10 @@ def hello():
     @return Página HTML con el saludo.
     """
     name = request.args.get("name", "visitante")
-    return f"<h1>Hola, {name}!</h1>"
+    return render_template_string(
+    "<h1>Hola, {{ nombre }}!</h1>",
+    nombre=name,
+)
 
 
 @app.route("/health")
