@@ -50,7 +50,27 @@ pipeline {
         }
 
         // >>> [SEGURIDAD]: aquí van las etapas "Security Review (SAST)" y "Dependency Management"
+        stage('Security Review (SAST)') {
+            steps {
+                sh 'mkdir -p reports'
+                script {
+                    catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
+                        sh 'bandit -q -f json -o reports/bandit.json app.py'
+                    }
+                }
+            }
+        }
 
+        stage('Dependency Management (SCA)') {
+            steps {
+                sh 'mkdir -p reports'
+                script {
+                    catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
+                        sh 'pip-audit -r requirements.txt --format json > reports/pip-audit.json'
+                    }
+                }
+            }
+        }
         // >>> [ZAP]: aquí van las etapas "Deploy Staging" y "DAST - OWASP ZAP"
 
         stage('Deploy Producción') {
